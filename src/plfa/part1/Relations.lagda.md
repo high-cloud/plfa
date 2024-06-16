@@ -15,7 +15,7 @@ the next step is to define relations, such as _less than or equal_.
 ```agda
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; cong)
-open import Data.Nat using (ℕ; zero; suc; _+_)
+open import Data.Nat using (ℕ; zero; suc; _+_ ; _*_)
 open import Data.Nat.Properties using (+-comm; +-identityʳ)
 ```
 
@@ -258,13 +258,15 @@ The first property to prove about comparison is that it is reflexive:
 for any natural `n`, the relation `n ≤ n` holds.  We follow the
 convention in the standard library and make the argument implicit,
 as that will make it easier to invoke reflexivity:
+
 ```agda
 ≤-refl : ∀ {n : ℕ}
     -----
   → n ≤ n
 ≤-refl {zero} = z≤n
-≤-refl {suc n} = s≤s ≤-refl
+≤-refl {suc n} = s≤s (≤-refl {n})
 ```
+
 The proof is a straightforward induction on the implicit argument `n`.
 In the base case, `zero ≤ zero` holds by `z≤n`.  In the inductive
 case, the inductive hypothesis `≤-refl {n}` gives us a proof of `n ≤
@@ -279,15 +281,19 @@ using holes and the `C-c C-c`, `C-c C-,`, and `C-c C-r` commands.
 The second property to prove about comparison is that it is
 transitive: for any naturals `m`, `n`, and `p`, if `m ≤ n` and `n ≤ p`
 hold, then `m ≤ p` holds.  Again, `m`, `n`, and `p` are implicit:
+
 ```agda
 ≤-trans : ∀ {m n p : ℕ}
   → m ≤ n
   → n ≤ p
     -----
   → m ≤ p
-≤-trans z≤n       _          =  z≤n
-≤-trans (s≤s m≤n) (s≤s n≤p)  =  s≤s (≤-trans m≤n n≤p)
+≤-trans z≤n m = z≤n
+≤-trans (s≤s n) (s≤s m) = s≤s (≤-trans n m)
+-- ≤-trans z≤n       _          =  z≤n
+-- ≤-trans (s≤s m≤n) (s≤s n≤p)  =  s≤s (≤-trans m≤n n≤p)
 ```
+
 Here the proof is by induction on the _evidence_ that `m ≤ n`.  In the
 base case, the first inequality holds by `z≤n` and must show `zero ≤ p`,
 which follows immediately by `z≤n`.  In this case, the fact that
@@ -458,6 +464,7 @@ and the right-hand side of the equation.
 
 Every use of `with` is equivalent to defining a helper function.  For
 example, the definition above is equivalent to the following:
+
 ```agda
 ≤-total′ : ∀ (m n : ℕ) → Total m n
 ≤-total′ zero    n        =  forward z≤n
@@ -468,6 +475,7 @@ example, the definition above is equivalent to the following:
   helper (forward m≤n)  =  forward (s≤s m≤n)
   helper (flipped n≤m)  =  flipped (s≤s n≤m)
 ```
+
 This is also our first use of a `where` clause in Agda.  The keyword `where` is
 followed by one or more definitions, which must be indented.  Any variables
 bound on the left-hand side of the preceding equation (in this case, `m` and
@@ -552,7 +560,12 @@ transitivity proves `m + p ≤ n + q`, as was to be shown.
 Show that multiplication is monotonic with regard to inequality.
 
 ```agda
--- Your code goes here
+*-mono–r : ∀ (n p q : ℕ)
+         -> p ≤ q
+        ---------------
+         -> n * p ≤ n * q
+*-mono–r zero p q z = z≤n
+*-mono–r (suc n) p q p≤q = +-mono-≤ p q (n * p) (n * q) p≤q (*-mono–r n p q p≤q)
 ```
 
 
@@ -753,6 +766,13 @@ Show that the sum of two odd numbers is even.
 
 ```agda
 -- Your code goes here
+o+o≡e : ∀ {m n : ℕ}
+  -> odd m
+  -> odd n
+  -------------
+  -> even (m + n)
+o+o≡e (suc zero) on = suc on
+o+o≡e (suc (suc x)) on = suc (suc (o+o≡e x on))
 ```
 
 #### Exercise `Bin-predicates` (stretch) {#Bin-predicates}
@@ -841,3 +861,4 @@ This chapter uses the following unicode:
 
 The commands `\^l` and `\^r` give access to a variety of superscript
 leftward and rightward arrows in addition to superscript letters `l` and `r`.
+  

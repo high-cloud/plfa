@@ -75,6 +75,10 @@ Give another example of a pair of operators that have an identity
 and are associative, commutative, and distribute over one another.
 (You do not have to prove these properties.)
 
+```agda
+
+```
+
 Give an example of an operator that has an identity and is
 associative but is not commutative.
 (You do not have to prove these properties.)
@@ -891,6 +895,9 @@ is associative and commutative.
 
 ```agda
 -- Your code goes here
++-assoc'' : ∀ (m n p : ℕ) → (m + n) + p ≡ m + (n + p)
++-assoc'' zero n p = refl
++-assoc'' (suc m) n p rewrite +-assoc'' m n p = refl
 ```
 
 
@@ -903,7 +910,17 @@ Show multiplication distributes over addition, that is,
 for all naturals `m`, `n`, and `p`.
 
 ```agda
--- Your code goes here
++-swap : ∀ (m n p : ℕ) → m + (n + p) ≡ n + (m + p)
++-swap m n p  =
+  begin
+   m + (n + p)
+  ≡⟨ sym (+-assoc m n p) ⟩
+   (m + n) + p
+  ≡⟨ cong (_+ p) (+-comm m n) ⟩
+   (n + m) + p
+  ≡⟨ +-assoc n m p ⟩
+   n + (m + p)
+  ∎
 ```
 
 
@@ -944,6 +961,9 @@ for all naturals `n`. Did your proof require induction?
 
 ```agda
 -- Your code goes here
++-zero-monus : ∀ n -> 0 ∸ n ≡ 0
++-zero-monus zero = refl
++-zero-monus (suc n) = refl
 ```
 
 
@@ -957,6 +977,23 @@ for all naturals `m`, `n`, and `p`.
 
 ```agda
 -- Your code goes here
+0∸n≡0 : ∀ n → 0 ∸ n ≡ 0
+0∸n≡0 zero = refl
+0∸n≡0 (suc n) = refl
+
+monus-assoc : ∀ (m n p : ℕ) -> m ∸ n ∸ p ≡ m ∸ (n + p)
+monus-assoc zero n p =
+  begin
+    0 ∸ n ∸ p
+  ≡⟨ cong (_∸ p) (0∸n≡0 n) ⟩
+    0 ∸ p
+  ≡⟨ 0∸n≡0 p ⟩
+    0
+  ≡⟨ sym (0∸n≡0 (n + p)) ⟩
+    0 ∸ (n + p)
+  ∎
+monus-assoc (suc m) zero p = refl
+monus-assoc (suc m) (suc n) p =  monus-assoc m n p
 ```
 
 

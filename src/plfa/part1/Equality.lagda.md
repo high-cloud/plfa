@@ -386,6 +386,7 @@ regard to inequality.  Rewrite all of `+-monoˡ-≤`, `+-monoʳ-≤`, and `+-mon
 
 ```agda
 -- Your code goes here
+
 ```
 
 

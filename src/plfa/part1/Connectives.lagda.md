@@ -239,6 +239,26 @@ is isomorphic to `(A → B) × (B → A)`.
 
 ```agda
 -- Your code goes here
+open _⇔_
+<>asso : ∀ {A B : Set} -> (A ⇔ B) ≃ ((A → B) × (B → A))
+<>asso =
+  record
+    {
+      to = λ aa -> ⟨ to aa , from aa ⟩
+    ; from = λ abxba -> record { to = proj₁ abxba
+                               ; from = proj₂ abxba }
+    ; from∘to = λ a<=>b -> refl
+    ; to∘from = λ abxba ->
+        begin
+          ⟨ to record { to = proj₁ abxba ; from = proj₂ abxba }
+          , from record { to = proj₁ abxba ; from = proj₂ abxba } ⟩
+        ≡⟨⟩
+          ⟨ proj₁ abxba , proj₂ abxba ⟩
+        ≡⟨ η-×  abxba ⟩
+          abxba
+        ∎
+    }
+
 ```
 
 
@@ -523,6 +543,26 @@ Show empty is the left identity of sums up to isomorphism.
 
 ```agda
 -- Your code goes here
+⊥-identityˡ : ∀ { A : Set } -> (⊥ ⊎ A) ≃ A
+⊥-identityˡ =
+  record
+    {
+      to = λ aa -> ⊥-identityˡ-to aa
+    ; from = λ a -> inj₂ a
+    ; from∘to = λ x → helper x
+    ; to∘from = λ y → refl
+    }
+  where
+    ⊥-identityˡ-to : ∀ {A : Set}
+      → ⊥ ⊎ A
+        -----
+      → A
+    ⊥-identityˡ-to (inj₁ ())
+    ⊥-identityˡ-to (inj₂ a) = a
+
+    helper : ∀ {A : Set} -> (x : ⊥ ⊎ A)
+      -> inj₂ (⊥-identityˡ-to x) ≡ x
+    helper (inj₂ x) = refl
 ```
 
 #### Exercise `⊥-identityʳ` (practice)

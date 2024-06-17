@@ -354,7 +354,7 @@ are cut down versions of the similar proofs for isomorphism:
 ≲-trans : ∀ {A B C : Set} → A ≲ B → B ≲ C → A ≲ C
 ≲-trans A≲B B≲C =
   record
-    { to      = λ{x → to   B≲C (to   A≲B x)}
+    { to      = λ x → to   B≲C (to   A≲B x)
     ; from    = λ{y → from A≲B (from B≲C y)}
     ; from∘to = λ{x →
         begin
@@ -437,11 +437,16 @@ open ≲-Reasoning
 
 Show that every isomorphism implies an embedding.
 ```agda
-postulate
-  ≃-implies-≲ : ∀ {A B : Set}
-    → A ≃ B
-      -----
-    → A ≲ B
+≃-implies-≲ : ∀ {A B : Set}
+  → A ≃ B
+    -----
+  → A ≲ B
+≃-implies-≲ A≲B =
+    record
+    { to      = to A≲B
+    ; from    = from A≲B
+    ; from∘to = from∘to A≲B
+    }
 ```
 
 ```agda
@@ -461,6 +466,15 @@ Show that equivalence is reflexive, symmetric, and transitive.
 
 ```agda
 -- Your code goes here
+⇔refl : ∀ {A : Set}
+  -> A ⇔ A
+⇔refl =
+ record
+ {
+   to = λ x -> x
+ ; from = λ x -> x
+ }
+
 ```
 
 #### Exercise `Bin-embedding` (stretch) {#Bin-embedding}

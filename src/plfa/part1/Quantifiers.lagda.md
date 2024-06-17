@@ -90,9 +90,18 @@ dependent product is ambiguous.
 
 Show that universals distribute over conjunction:
 ```agda
-postulate
-  ∀-distrib-× : ∀ {A : Set} {B C : A → Set} →
-    (∀ (x : A) → B x × C x) ≃ (∀ (x : A) → B x) × (∀ (x : A) → C x)
+-- postulate
+∀-distrib-× : ∀ {A : Set} {B C : A → Set} →
+  (∀ (x : A) → B x × C x) ≃ (∀ (x : A) → B x) × (∀ (x : A) → C x)
+∀-distrib-× =
+  record
+    {
+      to = λ f → ⟨ (λ x → proj₁ (f x)) , (λ x -> proj₂ (f x)) ⟩
+    ; from = λ (⟨ h , r ⟩ ) → λ x → ⟨ (h x) , (r x) ⟩
+    ; from∘to = λ x → refl
+    ; to∘from = λ y → refl
+    }
+
 ```
 Compare this with the result (`→-distrib-×`) in
 Chapter [Connectives](/Connectives/).
@@ -404,7 +413,7 @@ of a disjunction is isomorphic to a conjunction of negations:
   record
     { to      =  λ{ ¬∃xy x y → ¬∃xy ⟨ x , y ⟩ }
     ; from    =  λ{ ∀¬xy ⟨ x , y ⟩ → ∀¬xy x y }
-    ; from∘to =  λ{ ¬∃xy → extensionality λ{ ⟨ x , y ⟩ → refl } }
+    ; from∘to =  λ{ f -> extensionality λ{ ⟨ x , y ⟩ -> refl } }
     ; to∘from =  λ{ ∀¬xy → refl }
     }
 ```

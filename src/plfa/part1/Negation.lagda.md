@@ -379,6 +379,9 @@ Show that each of these implies all the others.
 
 ```agda
 -- Your code goes here
+a1 : ∀ {A : Set} -> (A ⊎ ¬ A) -> (¬ ¬ A → A)
+a1 (inj₁ x) k = x
+a1 (inj₂ y) k = ⊥-elim (k y)
 ```
 
 
